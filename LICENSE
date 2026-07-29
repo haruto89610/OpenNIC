@@ -1,0 +1,144 @@
+RTL-NIC Educational, Academic, and Hobby License
+Version 1.1 - 2026-07-29
+
+Copyright (c) 2026 Haruto Iguchi. All Rights Reserved.
+
+This license applies only to original software, source code, hardware designs,
+documentation, photographs, diagrams, illustrations, and other visual or
+technical materials authored and owned by the copyright holder and made
+available in this repository under this license (collectively, the
+"Materials"). Except for the limited permissions expressly granted below, no
+rights in the Materials are granted and all rights are reserved by the
+copyright holder.
+
+The Materials do not include third-party, vendor, or generated materials that
+the copyright holder does not own. Those materials remain subject to their
+respective copyright notices and license terms. Nothing in this license grants
+rights in third-party materials.
+
+1. Limited Noncommercial License
+
+Subject to every condition in this license, the copyright holder grants you a
+limited, worldwide, royalty-free, non-exclusive, non-transferable license to
+access, use, reproduce, study, test, modify, and create derivative works from
+the Materials solely for these purposes:
+
+  a. Educational use: personal learning, teaching, classroom instruction,
+     coursework, or educational demonstrations;
+
+  b. Academic use: noncommercial academic or scientific research conducted by
+     an individual, educational institution, nonprofit research organization,
+     or public research institution; or
+
+  c. Hobby use: personal experimentation, recreation, or amateur projects
+     undertaken without any commercial purpose or anticipated commercial
+     application.
+
+  d. Employment-evaluation use: internal evaluation by a prospective employer,
+     including a for-profit entity, solely to assess the copyright holder's
+     qualifications for recruitment or hiring. For this purpose, the
+     prospective employer may access, reproduce internally, inspect, lint,
+     simulate, synthesize, and make temporary modifications reasonably
+     necessary for that evaluation. Access and copies must be limited to
+     personnel or contractors directly involved in the evaluation. This
+     permission does not allow product or service development, commercial
+     research, deployment, production use, customer demonstrations, product
+     benchmarking, incorporation into another design, or proof-of-concept work
+     unrelated to evaluating the copyright holder as a candidate.
+
+For those purposes, you may create and test noncommercial prototypes based on
+the Materials, except that employment-evaluation use under Section 1(d) is
+limited to the activities expressly permitted in that subsection.
+
+2. Noncommercial Sharing
+
+You may share copies or modified versions of the Materials only when all of the
+following conditions are met:
+
+  a. the sharing is solely for a purpose permitted by Section 1;
+  b. except for internal sharing under Section 1(d), no fee, payment,
+     commercial benefit, or other compensation is received;
+  c. this license and all copyright and attribution notices are included
+     unchanged with every copy; and
+  d. you clearly identify any files you modified and the date of modification.
+
+Recipients receive permission directly from the copyright holder under this
+license. You may not sublicense the Materials or grant anyone broader rights.
+
+For employment-evaluation use under Section 1(d), copies may be shared only
+internally with personnel or contractors directly involved in the evaluation
+and may not be distributed outside the prospective employer.
+
+3. Absolute Prohibition on Commercial Use
+
+Except for the limited employment-evaluation use expressly permitted by
+Section 1(d), commercial use is prohibited. "Commercial use" means any use that
+is intended for, directed toward, connected with, or reasonably anticipated to
+result in commercial advantage, business benefit, monetary compensation, or
+revenue, whether directly or indirectly and whether or not any revenue or
+profit is actually received. A prospective employer's evaluation is not
+commercial use solely because the employer is a for-profit organization, but
+any use beyond Section 1(d) is commercial use.
+
+Prohibited commercial use includes, without limitation:
+
+  a. use by or for a for-profit company or other commercial organization,
+     except as expressly permitted by Section 1(d);
+  b. internal business use, evaluation, benchmarking, or proof-of-concept work,
+     except as expressly permitted by Section 1(d);
+  c. commercial research and development or preparation for commercialization;
+  d. use in consulting, contracting, employment, or services performed for a
+     commercial client or sponsor;
+  e. incorporation into, or use to develop, test, manufacture, market, support,
+     or provide any commercial product, service, or hardware;
+  f. sale, rental, licensing for a fee, paid access, or paid distribution;
+  g. use in advertising, fundraising, investment solicitation, or a monetized
+     project; and
+  h. any activity for which compensation or commercial benefit is received or
+     expected.
+
+Normal tuition, academic salaries, scholarships, and public or nonprofit
+research grants do not by themselves make an otherwise permitted educational
+or academic use commercial. However, work performed for the commercial benefit
+of a for-profit sponsor, employer, client, or partner is always prohibited.
+
+If a use is both educational, academic, or hobby-related and commercial, the
+commercial prohibition controls and the use is not permitted.
+
+4. Commercial Licensing
+
+No commercial rights are granted by this license. Any commercial use requires
+a separate written license signed by the copyright holder before that use
+begins. Commercial-license inquiries may be submitted using the contact
+information published at https://github.com/haruto89610. The copyright holder
+has no obligation to offer a commercial license.
+
+5. Restrictions and Reserved Rights
+
+You may not remove or alter copyright, attribution, or license notices. You may
+not represent the Materials as your original work or imply endorsement by the
+copyright holder.
+
+No patent, trademark, trade-secret, or other intellectual-property license is
+granted. All rights not expressly granted in this license are reserved.
+
+6. Termination
+
+Your rights under this license terminate automatically and immediately if you
+violate any term. Upon termination, you must stop using the Materials and
+destroy all copies and derivative works in your possession or control, except
+to the extent retention is required by law. Sections 3 through 8 survive
+termination.
+
+7. Disclaimer of Warranty
+
+THE MATERIALS ARE PROVIDED "AS IS" AND WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, TITLE, AND NON-INFRINGEMENT. YOU BEAR ALL RISK ARISING FROM USE OF THE
+MATERIALS.
+
+8. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER WILL NOT BE LIABLE
+FOR ANY CLAIM, LOSS, OR DAMAGES ARISING FROM OR RELATED TO THE MATERIALS OR THEIR
+USE, UNDER ANY LEGAL THEORY, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
