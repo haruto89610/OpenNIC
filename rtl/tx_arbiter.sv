@@ -32,37 +32,40 @@ logic [2:0] quota;
 logic       grant_hp;
 logic       grant_lp;
 
-assign tcb_addr_out_valid = (hp_valid || (lp_valid && tick)) && tx_datapath_ready;
-
 always_comb begin
     grant_hp = '0;
     grant_lp = '0;
-    hp_advance      = '0;
-    tcb_addr_out    = '0;
+    hp_advance        = 1'b0;
+    tcb_addr_out_valid = 1'b0;
+    tcb_addr_out       = '0;
 
     if (tx_datapath_ready) begin
-        if (quota > 'd4) begin
-            if (lp_valid) begin
+        if (quota > 3'd4) begin
+            if (tick && lp_valid) begin
                 grant_lp = 1'b1;
-                tcb_addr_out    = lp_tcb_addr;
             end
-            else if (hp_valid || !hp_empty) begin
-                grant_hp        = 1'b1;
-                hp_advance      = 1'b1;
-                tcb_addr_out    = hp_tcb_addr;
+            else if (hp_valid && !hp_empty) begin
+                grant_hp = 1'b1;
             end
         end
         else begin
-            if (hp_valid || !hp_empty) begin
-                grant_hp        = 1'b1;
-                hp_advance      = 1'b1;
-                tcb_addr_out    = hp_tcb_addr;
+            if (hp_valid && !hp_empty) begin
+                grant_hp = 1'b1;
             end
-            else if (lp_valid) begin
+            else if (tick && lp_valid) begin
                 grant_lp = 1'b1;
-                tcb_addr_out    = lp_tcb_addr;
             end
         end
+    end
+
+    if (grant_hp) begin
+        hp_advance        = 1'b1;
+        tcb_addr_out_valid = 1'b1;
+        tcb_addr_out       = hp_tcb_addr;
+    end
+    else if (grant_lp) begin
+        tcb_addr_out_valid = 1'b1;
+        tcb_addr_out       = lp_tcb_addr;
     end
 end
 
@@ -71,7 +74,7 @@ always_ff @(posedge clk) begin
         quota <= '0;
     end
     else begin
-        if (quota > 'd4) begin
+        if (quota > 3'd4) begin
             if (grant_lp) begin
                 quota <= '0;
             end
