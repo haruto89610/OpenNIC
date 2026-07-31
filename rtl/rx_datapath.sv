@@ -322,8 +322,8 @@ always_ff @(posedge clk) begin
                         tcp_csr.fin <= tdata_q[0];
                         tcp_csr.syn <= tdata_q[1];
                         tcp_csr.rst <= tdata_q[2];
+                        tcp_csr.psh <= tdata_q[3];
                         tcp_csr.ack <= tdata_q[4];
-                        meta_valid  <= 1'b1;
                     end
 
                     48 : tcp_hdr.window[15:8]     <= tdata_q;
@@ -331,7 +331,10 @@ always_ff @(posedge clk) begin
                     50 : tcp_hdr.checksum[15:8]   <= tdata_q;
                     51 : tcp_hdr.checksum[7:0]    <= tdata_q;
                     52 : tcp_hdr.urgent[15:8]     <= tdata_q;
-                    53 : tcp_hdr.urgent[7:0]      <= tdata_q;
+                    53 : begin
+                        tcp_hdr.urgent[7:0] <= tdata_q;
+                        meta_valid          <= 1'b1;
+                    end
                 endcase
             end
 
