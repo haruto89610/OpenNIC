@@ -31,8 +31,8 @@ module tx_datapath(
 );
 
 logic [19:0]    ip_sum;
-logic [19:0]    tcp_sum;
-logic [19:0]    payload_sum;
+logic [23:0]    tcp_sum;
+logic [23:0]    payload_sum;
 logic [15:0]    ip_checksum;
 logic [15:0]    tcp_checksum;
 logic [15:0]    tcp_flags_word;
@@ -48,6 +48,10 @@ logic [127:0]   tcp_payload_data_s0;
 
 logic           tcp_valid_s1;
 tcp_tx_desc_t   tcp_desc_s1;
+logic           arp_valid_s0;
+arp_tx_desc_t   arp_desc_s0;
+logic           arp_valid_s1;
+arp_tx_desc_t   arp_desc_s1;
 logic [127:0]   tcp_payload_data_s1;
 logic [7:0]     payload_len_bytes_s1;
 logic [15:0]    ip_total_len_s1;
@@ -55,11 +59,18 @@ logic [15:0]    tcp_total_len_s1;
 logic [15:0]    ip_checksum_s1;
 logic [15:0]    tcp_checksum_s1;
 
-assign s_axis_c2h_tvalid    = |s_axis_c2h_tdata;
-assign s_axis_c2h_tlast     = s_axis_c2h_tvalid;
+assign s_axis_c2h_tlast = s_axis_c2h_tvalid;
+
+wire output_slot_ready = !s_axis_c2h_tvalid || s_axis_c2h_tready;
 
 always_comb begin
-    payload_len_bytes = (tcp_payload_valid_s0 && tcp_valid_s0) ? tcp_payload_len_s0[7:0] : 8'd0;
+    payload_len_bytes = 8'd0;
+
+    if (tcp_payload_valid_s0 && tcp_valid_s0) begin
+        payload_len_bytes = (tcp_payload_len_s0 > 16'd16)
+                          ? 8'd16
+                          : tcp_payload_len_s0[7:0];
+    end
     ip_total_len      = 16'd40 + payload_len_bytes;
     tcp_total_len     = 16'd20 + payload_len_bytes;
 end
@@ -92,7 +103,7 @@ always_comb begin
         end
     end
 
-    tcp_sum = 20'h0006 + tcp_total_len +
+    tcp_sum = 24'h000006 + {8'd0, tcp_total_len} +
               tcp_desc_s0.src_ip[31:16] + tcp_desc_s0.src_ip[15:0] +
               tcp_desc_s0.dest_ip[31:16] + tcp_desc_s0.dest_ip[15:0] +
               tcp_desc_s0.src_port + tcp_desc_s0.dest_port +
@@ -100,8 +111,8 @@ always_comb begin
               tcp_desc_s0.ack_num[31:16] + tcp_desc_s0.ack_num[15:0] +
               tcp_flags_word + 16'hFFFF +
               payload_sum;
-    tcp_sum = tcp_sum[15:0] + tcp_sum[19:16];
-    tcp_sum = tcp_sum[15:0] + tcp_sum[19:16];
+    tcp_sum = {8'd0, tcp_sum[15:0]} + tcp_sum[23:16];
+    tcp_sum = {8'd0, tcp_sum[15:0]} + tcp_sum[23:16];
 
     tcp_checksum = ~tcp_sum[15:0];
 end
@@ -109,6 +120,7 @@ end
 always_ff @(posedge clk) begin
     if (rst) begin
         s_axis_c2h_tdata       <= '0;
+        s_axis_c2h_tvalid       <= 1'b0;
         s_axis_c2h_frame_bytes <= '0;
 
         tcp_valid_s0           <= 1'b0;
@@ -119,6 +131,10 @@ always_ff @(posedge clk) begin
 
         tcp_valid_s1           <= 1'b0;
         tcp_desc_s1            <= '0;
+        arp_valid_s0           <= 1'b0;
+        arp_desc_s0            <= '0;
+        arp_valid_s1           <= 1'b0;
+        arp_desc_s1            <= '0;
         tcp_payload_data_s1    <= '0;
         payload_len_bytes_s1   <= '0;
         ip_total_len_s1        <= '0;
@@ -126,13 +142,19 @@ always_ff @(posedge clk) begin
         ip_checksum_s1         <= '0;
         tcp_checksum_s1        <= '0;
     end
-    else begin
-        tcp_valid_s0         <= tcp_valid && (|tcp_desc.csr_curr);
+    else if (output_slot_ready) begin
+        tcp_valid_s0 <= tcp_valid && (|tcp_desc.csr_curr);
+        arp_valid_s0 <= arp_valid;
+
         if (tcp_valid && (|tcp_desc.csr_curr)) begin
             tcp_desc_s0          <= tcp_desc;
             tcp_payload_valid_s0 <= tcp_payload_valid;
             tcp_payload_len_s0   <= tcp_payload_len;
             tcp_payload_data_s0  <= tcp_payload_data;
+        end
+
+        if (arp_valid) begin
+            arp_desc_s0 <= arp_desc;
         end
 
         tcp_valid_s1           <= tcp_valid_s0;
@@ -144,7 +166,13 @@ always_ff @(posedge clk) begin
         ip_checksum_s1         <= ip_checksum;
         tcp_checksum_s1        <= tcp_checksum;
 
+        arp_valid_s1           <= arp_valid_s0;
+        arp_desc_s1            <= arp_desc_s0;
+
+        s_axis_c2h_tvalid      <= 1'b0;
+
         if (tcp_valid_s1) begin
+            s_axis_c2h_tvalid            <= 1'b1;
             s_axis_c2h_frame_bytes      <= 8'd54 + payload_len_bytes_s1;
             s_axis_c2h_tdata[575:464]   <= {tcp_desc_s1.dest_mac, tcp_desc_s1.src_mac, ETH_TYPE_IPV4};
 
@@ -177,9 +205,10 @@ always_ff @(posedge clk) begin
             s_axis_c2h_tdata[143:16]    <= tcp_payload_data_s1;
             s_axis_c2h_tdata[15:0]      <= '0;
         end
-        else if (arp_valid) begin
+        else if (arp_valid_s1) begin
+            s_axis_c2h_tvalid     <= 1'b1;
             s_axis_c2h_frame_bytes <= 8'd42;
-            s_axis_c2h_tdata[575:464] <= {arp_desc.dest_mac, arp_desc.src_mac, ETH_TYPE_ARP};
+            s_axis_c2h_tdata[575:464] <= {arp_desc_s1.dest_mac, arp_desc_s1.src_mac, ETH_TYPE_ARP};
 
             s_axis_c2h_tdata[463:448] <= 16'h0001;
             s_axis_c2h_tdata[447:432] <= 16'h0800;
@@ -187,19 +216,18 @@ always_ff @(posedge clk) begin
             s_axis_c2h_tdata[431:424] <= 8'd6;
             s_axis_c2h_tdata[423:416] <= 8'd4;
 
-            s_axis_c2h_tdata[415:400] <= arp_desc.oper;
+            s_axis_c2h_tdata[415:400] <= arp_desc_s1.oper;
 
-            s_axis_c2h_tdata[399:352] <= arp_desc.sha;
-            s_axis_c2h_tdata[351:320] <= arp_desc.spa;
+            s_axis_c2h_tdata[399:352] <= arp_desc_s1.sha;
+            s_axis_c2h_tdata[351:320] <= arp_desc_s1.spa;
 
-            s_axis_c2h_tdata[319:272] <= arp_desc.tha;
-            s_axis_c2h_tdata[271:240] <= arp_desc.tpa;
+            s_axis_c2h_tdata[319:272] <= arp_desc_s1.tha;
+            s_axis_c2h_tdata[271:240] <= arp_desc_s1.tpa;
             s_axis_c2h_tdata[239:0]   <= '0;
         end
         else begin
             s_axis_c2h_tdata       <= '0;
             s_axis_c2h_frame_bytes <= '0;
-
         end
     end
 end
