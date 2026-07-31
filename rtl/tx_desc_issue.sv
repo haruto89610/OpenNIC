@@ -8,6 +8,7 @@
 
 `timescale 1ns / 1ps
 
+import packages::*;
 
 module tx_desc_issue(
     input logic     clk,
@@ -27,8 +28,11 @@ always_ff @(posedge clk) begin
         tx_desc_valid_out   <= '0;
     end
     else begin
-        tx_desc_out         <= tx_desc_in;
-        tx_desc_valid_out   <= tx_desc_valid_in && ~invalidate;
+        tx_desc_valid_out <= tx_desc_valid_in && !invalidate;
+
+        if (tx_desc_valid_in && !invalidate) begin
+            tx_desc_out <= tx_desc_in;
+        end
     end
 end
 
